@@ -1,0 +1,236 @@
+' Gambas class file
+
+' Toda la información sobre esta aplicació en:
+' https://thenerdyapprentice.blogspot.com/
+' Visita y deja algún comentario en el blog XD
+' The Nerdy Apprentice 
+
+Public Conn As Connection
+Public Contenido As Result
+Private Item_Seleccionado As Integer
+Private Cheers As Sound
+Private sAppDir As String = User.home &/ "/lista_db"
+
+Public Sub Form_Open()
+  
+  Me.Text = "Tachame la Lista! " & "v." & Application.Version
+  
+  ' Chequeamos que exista el directorio con la base de datos
+  If Not Exist(sAppDir) Then 
+    Mkdir sAppDir
+    Copy "./b_datos.sqlite" To sAppDir &/ "b_datos.sqlite"
+  Endif
+  
+  Conectar()
+  Mostrar_Lista()
+  Chequear_Realizados()
+  
+End
+
+Public Sub Conectar() ' Función para conectarnos a la base de datos
+  
+  Conn = New Connection
+  Conn.Type = "sqlite"
+  Conn.host = sAppDir
+  Conn.Name = "b_datos.sqlite"
+  Try Conn.Open
+  If Error Then
+    Message.Error("Error al conectar con la base de datos. Asegúrese de que el archivo con la base de datos se encuentre en la carpeta del programa. " & Application.Path)
+    Conn = Null
+    Quit
+  Endif
+  
+End
+
+Public Sub Form_KeyRelease()
+  
+  If Key.Code = Key.Esc Then
+    'Settings.Write(Me)
+    Conn.Close
+    Quit
+  Endif
+  
+End
+
+Public Sub Mostrar_Lista() ' Función para popular la lista de eventos
+  
+  Contenido = Conn.Exec("select id, completado, titulo from datos")
+  If Contenido.Available Then 
+    VLista.Clear
+    While (Contenido.Available)
+      If Contenido!completado = False Then 
+        VLista.Add(CInt(Contenido!id), Contenido!titulo, Picture["incomp.png"])
+      Else 
+        VLista.Add(CInt(Contenido!id), Contenido!titulo, Picture["comp.png"])
+      Endif 
+      Contenido.MoveNext
+    Wend
+    
+  Endif
+  
+  If VLista.Count = 0 Then 'Si no hay ningún contenido en la lista limpiar ocultar el panel de contenido y desactivar menú borrar todos 
+    txContenido.Text = ""
+    panelContenido.Visible = False
+    mnuBorrarRealizado.Enabled = False
+  Else 
+    mnuBorrarRealizado.Enabled = True
+  Endif    
+  
+  Chequear_Realizados()
+  
+End
+
+Public Sub VLista_Select() ' Función que nos muestra el contenido del título elegido en la ListView
+  ' select * from datos where id = 1
+  
+  Contenido = Conn.Exec("select contenido from datos where id = " & VLista.Item.key)
+  If Contenido!contenido <> "" Then
+    txContenido.Text = Contenido!contenido
+    txContenido.pos = 0
+    panelContenido.Visible = True
+  Else 
+    panelContenido.Visible = False
+  Endif
+  
+  Item_Seleccionado = VLista.Item.key
+  
+End
+
+Public Sub mnAgregar_Click()
+  
+  frmAgregar.show
+  
+End
+
+Public Sub mnBorrar_Click()
+  
+  'Chequeamos primero que se haya seleccionado un elemento de la lista
+  ' If Item_Seleccionado = 0 Then 
+  '   Message.Warning("Debe seleccionar primero un elemento de la lista")
+  '   Return 
+  ' Endif
+  
+  If Message.Question("¿Está seguro de que desea borrar este ítem?", "Si", "No") = 1 Then 
+    Contenido = Conn.Exec("delete from datos where id=" & Item_Seleccionado)
+  Endif
+  
+  'Limpiamos lista y recargamos
+  VLista.Clear
+  Mostrar_Lista
+  
+  If VLista.Count = 0 Then 'Si no hay ningún contenido en la lista limpiar ocultar el panel de contenido
+    txContenido.Text = ""
+    panelContenido.Visible = False
+    Rep_Audio_Final()
+  Endif    
+  
+End
+
+Public Sub mnuBorrarRealizado_Click()
+  ' !!!! Habría que chequear primero que haya items marcados completados para ser borrados
+  
+  If Message.Question("¿Está seguro de que desea borrar todos los ítems marcados como completados?") = 1 Then 
+    Conn.Exec("delete from datos where completado=True")
+  Endif
+  
+  'Limpiamos lista y recargamos
+  VLista.Clear
+  Mostrar_Lista
+  Rep_Audio_Final()
+  
+End
+
+Public Sub Chequear_Realizados() 
+  ' Función para chequear si hay elementos completados de la lista así habilitamos / deshabilitamos el menú de borrado los elementos completados
+  
+  mnuBorrarRealizado.Enabled = False
+  
+  Contenido = Conn.Exec("select completado from datos where completado=true")
+  If contenido.Available = ""
+    Return 
+  Else 
+    mnuBorrarRealizado.Enabled = True
+  Endif
+  
+End
+
+Public Sub mnMarcarCompletado_Click()
+  'Chequeamos primero que se haya seleccionado un elemento de la lista
+  
+  ' If Item_Seleccionado = 0 Then 
+  '   Message.Warning("Debe seleccionar primero un elemento de la lista")
+  '   Return 
+  ' Endif
+  
+  Contenido = Conn.Edit("datos", "id=" & Item_Seleccionado)
+  Contenido!completado = True
+  contenido.Update
+  
+  'Limpiamos lista y recargamos
+  Rep_Audio
+  VLista.Clear
+  Mostrar_Lista
+  
+End
+
+Public Sub mnMarcarIncompleto_Click()
+  'Chequeamos primero que se haya seleccionado un elemento de la lista
+  
+  ' If Item_Seleccionado = 0 Then 
+  '   Message.Warning("Debe seleccionar primero un elemento de la lista")
+  '   Return 
+  ' Endif
+  
+  Contenido = Conn.Edit("datos", "id=" & Item_Seleccionado)
+  Contenido!completado = False
+  contenido.Update
+  
+  'Limpiamos lista y recargamos
+  VLista.Clear
+  Mostrar_Lista
+  
+End
+
+Public Sub Rep_Audio() 'Función para reproducir sonido de victoria XD
+  
+  Dim sonidos As New String[2]
+  
+  sonidos[0] = "yay.wav"
+  sonidos[1] = "fanfare.wav"
+  
+  Cheers = Sound.Load(sonidos[Rand(0, 1)])
+  Cheers.Play
+  
+End
+
+Public Sub Rep_Audio_Final()
+  
+  Dim sonido As String
+  
+  sonido = "short-applause.wav"
+  
+  cheers = Sound.Load(sonido)
+  cheers.Play
+  
+End
+
+Public Sub mnSalir_Click()
+  
+  Conn.Close
+  Quit 
+  
+End
+
+Public Sub mnAcerca_Click()
+  
+  frmAbout.show
+  
+End
+
+Public Sub Form_Close()
+  
+  Conn.Close
+  TrayIcon1.Delete
+  Quit 
+  
+End

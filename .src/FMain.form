@@ -1,0 +1,69 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,86,55)
+  Icon = Picture["icon.png"]
+  Arrangement = Arrange.Horizontal
+  AutoResize = True
+  { Lista Menu
+    Text = ("Lista")
+    { mnAgregar Menu
+      Text = ("Agregar")
+      Picture = Picture["icon:/32/added"]
+    }
+    { mnBorrar Menu
+      Text = ("Borrar")
+      Picture = Picture["icon:/32/delete"]
+    }
+    { Menu1 Menu
+    }
+    { mnMarcarCompletado Menu
+      Text = ("Marcar Completado")
+      Picture = Picture["comp.png"]
+    }
+    { mnMarcarIncompleto Menu
+      Text = ("Marcar Incompleto")
+      Picture = Picture["incomp.png"]
+    }
+    { Menu4 Menu
+    }
+    { mnuBorrarRealizado Menu
+      Text = ("Borrar ítems completados")
+      Picture = Picture["icon:/32/clear"]
+    }
+  }
+  { Programa Menu
+    Text = ("Programa")
+    { mnSalir Menu
+      Text = ("Salir")
+      Picture = Picture["icon:/32/quit"]
+    }
+    { Menu2 Menu
+    }
+    { mnAcerca Menu
+      Text = ("Acerca de") & "..."
+      Picture = Picture["icon:/32/info"]
+    }
+  }
+  { VLista ListView
+    MoveScaled(1,1,42,53)
+    Expand = True
+    PopupMenu = "Lista"
+  }
+  { panelContenido Panel
+    MoveScaled(44,1,41,53)
+    Visible = False
+    { txContenido TextArea
+      MoveScaled(1,1,39,51)
+      Expand = True
+      ReadOnly = True
+      Wrap = True
+      Border = False
+    }
+  }
+  { TrayIcon1 #TrayIcon
+    #MoveScaled(79,1)
+    Picture = Picture.Load("icon.png")
+    PopupMenu = "Programa"
+  }
+}

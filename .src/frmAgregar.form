@@ -1,0 +1,33 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,68,29)
+  Icon = Picture["icon:/32/added"]
+  Resizable = False
+  Padding = 2
+  { Label1 Label
+    MoveScaled(1,1,16,3)
+    Text = ("Agregar a la lista:")
+  }
+  { txAgregarLista TextBox
+    MoveScaled(1,5,66,3)
+  }
+  { Label2 Label
+    MoveScaled(1,9,11,3)
+    Text = ("Descripción:")
+  }
+  { txAgregarDescripcion TextArea
+    MoveScaled(1,13,66,9)
+    Wrap = True
+  }
+  { btnAgregar Button
+    MoveScaled(1,23,13,4)
+    Text = ("Listo")
+    Picture = Picture["icon:/24/apply"]
+  }
+  { btnCancelar Button
+    MoveScaled(54,23,13,4)
+    Text = ("Cancelar")
+    Picture = Picture["icon:/24/cancel"]
+  }
+}

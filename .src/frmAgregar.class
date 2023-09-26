@@ -1,0 +1,62 @@
+' Gambas class file
+
+Public Sub btnAgregar_Click()
+  ' SELECT MAX(id) FROM clases LIMIT 1 --> Nos devuelve el total de IDs en la tabla
+  
+  Dim Idn As Integer
+  
+  If txAgregarLista.Text = "" Then 
+    Message.Warning("No puede agregarun elemento vacío a la lista")
+    Return 
+  Endif
+  
+  'Obtenemos el último ID y sumamos +1 para el nuevo registro
+  FMain.Contenido = FMain.Conn.Exec("SELECT MAX(id) FROM datos LIMIT 1")
+  'Si no hay ninguna entrada arrancamos desde cero
+  If FMain.Contenido["MAX(id)"] = Null Then 
+    idn = 0
+  Else 
+    Idn = CInt(FMain.Contenido["MAX(id)"]) + 1
+  Endif
+  
+  FMain.contenido = FMain.Conn.Create("datos")
+  FMain.Contenido!id = idn
+  FMain.Contenido!titulo = txAgregarLista.Text
+  
+  If txAgregarDescripcion.Text <> "" Then 
+    FMain.Contenido!contenido = txAgregarDescripcion.Text
+  Endif
+  
+  FMain.Contenido!completado = False
+  FMain.Contenido.Update
+  
+  FMain.mostrar_lista()
+  Me.Close
+  
+End
+
+Public Sub btnCancelar_Click()
+  
+  Me.Close
+  
+End
+
+Public Sub Form_KeyRelease()
+  
+  If Key.Code = Key.Esc Then
+    Me.Close
+  Endif
+  
+End
+
+Public Sub txAgregarLista_KeyRelease()
+  
+  If Key.Code = 16777220 Or Key.code = 16777221 Then 'No me funciona de otra manera que no sea usando el código
+    btnAgregar_Click
+  Endif
+  
+End
+
+Public Sub Form_Open()
+  
+End

@@ -1,0 +1,18 @@
+* Fri Sep 22 2023 The Nerdy Apprentice <marianoctt@gmail.com> 0.1.3
+- Correción de error al comprobar si existen tareas sin completar
+- Corrección de error con el ícono de la bandeja de tareas
+
+* Fri Sep 15 2023 The Nerdy Apprentice <marianocattani@gmail.com> 0.1.2
+- Creación paquete de instalación para Arch / Autotools
+
+* Fri Sep 15 2023 The Nerdy Apprentice <marianocattani@gmail.com> 0.1.0
+- Corrección de error al reproducir uno de los audios
+
+* Fri Sep 15 2023 The Nerdy Apprentice <marianocattani@gmail.com> 0.1.0
+- Corrección de errores
+- Agregado ícono en barra de tareas
+- Agregado sonido al limpiar la lista
+
+* Mon Aug 28 2023 The Nerdy Apprentice <marianocattani@gmail.com> 0.0.10
+- Lanzamiento inicial
+
