@@ -1,8 +1,9 @@
 # Gambas Form File 3.0
 
 { Form Form
-  MoveScaled(0,0,86,55)
+  MoveScaled(0,0,86,58)
   Icon = Picture["icon.png"]
+  Resizable = False
   Arrangement = Arrange.Horizontal
   AutoResize = True
   { Lista Menu
@@ -10,6 +11,7 @@
     { mnAgregar Menu
       Text = ("Agregar")
       Picture = Picture["icon:/32/added"]
+      Shortcut = "Ctrl+A"
     }
     { mnBorrar Menu
       Text = ("Borrar")
@@ -58,7 +60,6 @@
       Expand = True
       ReadOnly = True
       Wrap = True
-      Border = False
     }
   }
   { TrayIcon1 #TrayIcon

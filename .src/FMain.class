@@ -234,3 +234,11 @@ Public Sub Form_Close()
   Quit 
   
 End
+
+Public Sub Form_KeyPress() 'Atajo de teclado para crear entrada
+  
+  If Key.Code = Key["a"] And Key.control Then 
+    mnAgregar_Click()
+  Endif
+  
+End
