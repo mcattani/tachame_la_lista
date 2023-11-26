@@ -54,6 +54,8 @@ End
 
 Public Sub Mostrar_Lista() ' Función para popular la lista de eventos
   
+  Conectar()
+  
   Contenido = Conn.Exec("select id, completado, titulo from datos")
   If Contenido.Available Then 
     VLista.Clear
@@ -78,10 +80,14 @@ Public Sub Mostrar_Lista() ' Función para popular la lista de eventos
   
   Chequear_Realizados()
   
+  Conn.Close
+  
 End
 
 Public Sub VLista_Select() ' Función que nos muestra el contenido del título elegido en la ListView
   ' select * from datos where id = 1
+  
+  Conectar()
   
   Contenido = Conn.Exec("select contenido from datos where id = " & VLista.Item.key)
   If Contenido!contenido <> "" Then
@@ -93,6 +99,8 @@ Public Sub VLista_Select() ' Función que nos muestra el contenido del título e
   Endif
   
   Item_Seleccionado = VLista.Item.key
+  
+  Conn.Close
   
 End
 
@@ -110,6 +118,8 @@ Public Sub mnBorrar_Click()
   '   Return 
   ' Endif
   
+  conectar()
+  
   If Message.Question("¿Está seguro de que desea borrar este ítem?", "Si", "No") = 1 Then 
     Contenido = Conn.Exec("delete from datos where id=" & Item_Seleccionado)
   Endif
@@ -124,24 +134,34 @@ Public Sub mnBorrar_Click()
     Rep_Audio_Final()
   Endif    
   
+  Conn.Close
+  
 End
 
 Public Sub mnuBorrarRealizado_Click()
   ' !!!! Habría que chequear primero que haya items marcados completados para ser borrados
   
+  Conectar()
+  
   If Message.Question("¿Está seguro de que desea borrar todos los ítems marcados como completados?") = 1 Then 
     Conn.Exec("delete from datos where completado=True")
-  Endif
+    'Limpiamos lista y recargamos
+    VLista.Clear
+    Mostrar_Lista
+    Rep_Audio_Final()
+  Else 
+    Return 
+    
+  Endif 
   
-  'Limpiamos lista y recargamos
-  VLista.Clear
-  Mostrar_Lista
-  Rep_Audio_Final()
+  conn.Close 
   
 End
 
 Public Sub Chequear_Realizados() 
   ' Función para chequear si hay elementos completados de la lista así habilitamos / deshabilitamos el menú de borrado los elementos completados
+  
+  conectar()
   
   mnuBorrarRealizado.Enabled = False
   
@@ -152,6 +172,8 @@ Public Sub Chequear_Realizados()
     mnuBorrarRealizado.Enabled = True
   Endif
   
+  conn.Close 
+  
 End
 
 Public Sub mnMarcarCompletado_Click()
@@ -161,6 +183,7 @@ Public Sub mnMarcarCompletado_Click()
   '   Message.Warning("Debe seleccionar primero un elemento de la lista")
   '   Return 
   ' Endif
+  conectar()
   
   Contenido = Conn.Edit("datos", "id=" & Item_Seleccionado)
   Contenido!completado = True
@@ -170,6 +193,8 @@ Public Sub mnMarcarCompletado_Click()
   Rep_Audio
   VLista.Clear
   Mostrar_Lista
+  
+  conn.Close
   
 End
 
@@ -181,6 +206,8 @@ Public Sub mnMarcarIncompleto_Click()
   '   Return 
   ' Endif
   
+  conectar()
+  
   Contenido = Conn.Edit("datos", "id=" & Item_Seleccionado)
   Contenido!completado = False
   contenido.Update
@@ -188,6 +215,8 @@ Public Sub mnMarcarIncompleto_Click()
   'Limpiamos lista y recargamos
   VLista.Clear
   Mostrar_Lista
+  
+  conn.Close
   
 End
 
@@ -200,6 +229,8 @@ Public Sub Rep_Audio() 'Función para reproducir sonido de victoria XD
   
   Cheers = Sound.Load(sonidos[Rand(0, 1)])
   Cheers.Play
+  
+  cheers.Play
   
 End
 

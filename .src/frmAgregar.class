@@ -3,6 +3,8 @@
 Public Sub btnAgregar_Click()
   ' SELECT MAX(id) FROM clases LIMIT 1 --> Nos devuelve el total de IDs en la tabla
   
+  FMain.Conectar()  
+  
   Dim Idn As Integer
   
   If txAgregarLista.Text = "" Then 
@@ -29,8 +31,10 @@ Public Sub btnAgregar_Click()
   
   FMain.Contenido!completado = False
   FMain.Contenido.Update
-  
   FMain.mostrar_lista()
+  
+  FMain.Conn.Close
+  
   Me.Close
   
 End

@@ -1,3 +1,7 @@
+* Sun Nov 26 2023 The Nerdy Apprentice <marianoctt@gmail.com> 0.3.4
+- Corrección de errores
+- Optimización de código
+
 * Mon Oct 16 2023 The Nerdy Apprentice <marianoctt@gmail.com> 0.2.3
 - Agregada combinación de teclas CTRL+A para agregar nuevas entradas
 - Falta corregir bug al cambiar el tamaño de la ventana, por el momento se desactiva la opción de resize
