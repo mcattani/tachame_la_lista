@@ -12,6 +12,8 @@ Private Cheers As Sound
 Private sAppDir As String = User.home &/ "/lista_db"
 
 Public Sub Form_Open()
+  '  VLista[Item_Seleccionado].Background = Color.Darker(Color.Yellow)
+  '  VLista[Item_Seleccionado].Foreground = Color.Black  
   
   Me.Text = "Tachame la Lista! " & "v." & Application.Version
   
@@ -100,6 +102,8 @@ Public Sub VLista_Select() ' Función que nos muestra el contenido del título e
   
   Item_Seleccionado = VLista.Item.key
   
+  Print (Item_Seleccionado)
+  
   Conn.Close
   
 End
@@ -113,10 +117,10 @@ End
 Public Sub mnBorrar_Click()
   
   'Chequeamos primero que se haya seleccionado un elemento de la lista
-  ' If Item_Seleccionado = 0 Then 
-  '   Message.Warning("Debe seleccionar primero un elemento de la lista")
-  '   Return 
-  ' Endif
+  If VLista.Selected = False Then
+    Message.Error("Debe elegir un ítem primero")
+    Return 
+  Endif
   
   conectar()
   
@@ -130,9 +134,11 @@ Public Sub mnBorrar_Click()
   
   If VLista.Count = 0 Then 'Si no hay ningún contenido en la lista limpiar ocultar el panel de contenido
     txContenido.Text = ""
-    panelContenido.Visible = False
+    'panelContenido.Visible = False
     Rep_Audio_Final()
   Endif    
+  
+  panelContenido.Visible = False 'Cerramos el panel lateral para que no quede abierto tras borrar ítem que pueda conetener
   
   Conn.Close
   
@@ -140,6 +146,12 @@ End
 
 Public Sub mnuBorrarRealizado_Click()
   ' !!!! Habría que chequear primero que haya items marcados completados para ser borrados
+  
+  'Chequeamos primero que se haya seleccionado un elemento de la lista
+  If VLista.Selected = False Then
+    Message.Error("Debe elegir un ítem primero")
+    Return 
+  Endif
   
   Conectar()
   
@@ -153,6 +165,8 @@ Public Sub mnuBorrarRealizado_Click()
     Return 
     
   Endif 
+  
+  panelContenido.Visible = False ' Cerramos el panel lateral por si queda abierto tras borrar ítem realizado
   
   conn.Close 
   
@@ -179,10 +193,11 @@ End
 Public Sub mnMarcarCompletado_Click()
   'Chequeamos primero que se haya seleccionado un elemento de la lista
   
-  ' If Item_Seleccionado = 0 Then 
-  '   Message.Warning("Debe seleccionar primero un elemento de la lista")
-  '   Return 
-  ' Endif
+  If VLista.Selected = False Then
+    Message.Error("Debe elegir un ítem primero")
+    Return 
+  Endif
+  ' 
   conectar()
   
   Contenido = Conn.Edit("datos", "id=" & Item_Seleccionado)
@@ -199,12 +214,12 @@ Public Sub mnMarcarCompletado_Click()
 End
 
 Public Sub mnMarcarIncompleto_Click()
-  'Chequeamos primero que se haya seleccionado un elemento de la lista
   
-  ' If Item_Seleccionado = 0 Then 
-  '   Message.Warning("Debe seleccionar primero un elemento de la lista")
-  '   Return 
-  ' Endif
+  ' Nos aseguramos que haya in ítem seleccionado
+  If Item_Seleccionado = 0 Then 
+    Message.Error("Debe seleccionar un ítem primero")
+    Return 
+  Endif
   
   conectar()
   

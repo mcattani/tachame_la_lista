@@ -1,3 +1,7 @@
+* Thu Dec 14 2023 The Nerdy Apprentice <marianoctt@gmail.com> 0.3.5
+- Arreglado problema con panel lateral tras borrar ítem
+- Correción al intentar borrar / marcar completado ítem si no hay ninguno elegido
+
 * Sun Nov 26 2023 The Nerdy Apprentice <marianoctt@gmail.com> 0.3.4
 - Corrección de errores
 - Optimización de código
