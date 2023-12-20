@@ -147,11 +147,12 @@ End
 Public Sub mnuBorrarRealizado_Click()
   ' !!!! Habría que chequear primero que haya items marcados completados para ser borrados
   
-  'Chequeamos primero que se haya seleccionado un elemento de la lista
-  If VLista.Selected = False Then
-    Message.Error("Debe elegir un ítem primero")
-    Return 
-  Endif
+  '' Acá no se hace falta chequear que haya un elemento seleccionado. 
+  ' 'Chequeamos primero que se haya seleccionado un elemento de la lista
+  ' If VLista.Selected = False Then
+  '   Message.Error("Debe elegir un ítem primero")
+  '   Return 
+  ' Endif
   
   Conectar()
   

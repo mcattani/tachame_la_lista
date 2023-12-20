@@ -1,3 +1,6 @@
+* Wed Dec 20 2023 The Nerdy Apprentice <marianoctt@gmail.com> 0.3.6
+- Corregido error la opción 'borrar ítems realizados' no se necesita que esté seleccionado un ítem para utilizarlo
+
 * Thu Dec 14 2023 The Nerdy Apprentice <marianoctt@gmail.com> 0.3.5
 - Arreglado problema con panel lateral tras borrar ítem
 - Correción al intentar borrar / marcar completado ítem si no hay ninguno elegido
@@ -27,4 +30,3 @@
 
 * Mon Aug 28 2023 The Nerdy Apprentice <marianocattani@gmail.com> 0.0.10
 - Lanzamiento inicial
-
