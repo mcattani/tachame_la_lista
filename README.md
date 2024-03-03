@@ -12,4 +12,4 @@ La información se almacena en una base de datos **sqlite3**  que consta de 5 ca
 
 Se reproducen sonidos cada vez que una ítem de la lista se marca como "realizado" y también cuando se completa la lista entera o se borran todos los elementos.
 
-Más información en: [Tachame la lista! - The Nerdy Apprentice](https://thenerdyapprentice.blogspot.com/2024/03/actualizacion-tachame-la-lista.html)https://thenerdyapprentice.blogspot.com/2024/03/actualizacion-tachame-la-lista.html) 
+Más información en: [Tachame la lista! - The Nerdy Apprentice](https://thenerdyapprentice.blogspot.com/2024/03/actualizacion-tachame-la-lista.html)
