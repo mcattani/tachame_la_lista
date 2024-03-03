@@ -1,0 +1,48 @@
+' Gambas module file
+
+Public Sub Buscar_Actualizacion()
+  
+  Dim vChk As String
+  
+  vChk = GitVersion("https://raw.githubusercontent.com/mcattani/tachame_la_lista/master/.project")
+  'Print vChk
+  If Application.Version <> vChk Then
+    If vChk = "" Then ' Si no obtenemos ningún resultado es porque no podemos obtener le info de github
+      Message.Info("Error al buscar actualización. ¿Está conectado a internet?")
+      Return 
+    Endif
+    Message.Info(("Nueva versión encontrada!") & " v" & vChk)
+  Else 
+    Message.Info("No se ha encontrado una nueva versión")
+  Endif 
+  
+End
+
+Private Function GitVersion(raw As String) As String
+  
+  Dim s As String
+  Dim stx As String[]
+  Dim r As String
+  Dim v As String
+  
+  v = ""
+  If Exist("/tmp/project.txt") Then
+    Shell "rm /tmp/project.txt" Wait
+  Endif
+  
+  Shell "wget -qO '/tmp/project.txt' '" & raw & "'" Wait
+  If Exist("/tmp/project.txt") Then
+    s = File.Load("/tmp/project.txt")
+    stx = Split(s, "\n")
+    For Each r In stx
+      If InStr(r, "Version=") Then
+        If Split(r, "=")[0] = "Version" Then
+          v = Split(r, "=")[1]
+          Break
+        Endif
+      Endif
+    Next
+  Endif
+  Return v
+  
+End

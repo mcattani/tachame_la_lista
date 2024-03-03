@@ -19,6 +19,16 @@
     }
     { Menu1 Menu
     }
+    { mnuMarcarImportante Menu
+      Text = ("Marcar Importante")
+      Picture = Picture["icon:/32/highlight"]
+    }
+    { mnuQuitarResaltado Menu
+      Text = ("Desmarcar Importante")
+      Picture = Picture["icon:/32/line-style"]
+    }
+    { Menu4 Menu
+    }
     { mnMarcarCompletado Menu
       Text = ("Marcar Completado")
       Picture = Picture["comp.png"]
@@ -26,8 +36,6 @@
     { mnMarcarIncompleto Menu
       Text = ("Marcar Incompleto")
       Picture = Picture["incomp.png"]
-    }
-    { Menu4 Menu
     }
     { mnuBorrarRealizado Menu
       Text = ("Borrar ítems completados")
@@ -39,6 +47,10 @@
     { mnSalir Menu
       Text = ("Salir")
       Picture = Picture["icon:/32/quit"]
+    }
+    { mnuBuscarActualizaciones Menu
+      Text = ("Buscar Actualizaciones")
+      Picture = Picture["icon:/24/update"]
     }
     { Menu2 Menu
     }

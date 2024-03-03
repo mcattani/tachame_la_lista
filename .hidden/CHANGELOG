@@ -1,3 +1,17 @@
+* Sun Mar 03 2024 The Nerdy Apprentice <marianoctt@gmail.com> 0.5.11
+- Cambio y corrección en el módulo de búsqueda de actualizaciones
+
+* Sat Feb 24 2024 The Nerdy Apprentice <marianoctt@gmail.com> 0.5.10
+- Corrección de errores
+- Agregada funcionalidad para la búsqueda de actualizaciones (usando de referencia el repositorio en github, requiere conexión a internet)
+
+* Sat Feb 24 2024 The Nerdy Apprentice <marianoctt@gmail.com> 0.4.9
+- Al agregar una descripción cuando se crea un elemento en la lista. Se puede presionar TAB y luego ENTER para agregar el nuevo ítem a la lista.
+
+* Fri Feb 16 2024 The Nerdy Apprentice <marianoctt@gmail.com> 0.4.8
+- Agregada opción para resaltar ítems (marcar importante)
+- Optimización de código
+
 * Wed Dec 20 2023 The Nerdy Apprentice <marianoctt@gmail.com> 0.3.6
 - Corregido error la opción 'borrar ítems realizados' no se necesita que esté seleccionado un ítem para utilizarlo
 

@@ -25,15 +25,22 @@ Public Sub btnAgregar_Click()
   FMain.Contenido!id = idn
   FMain.Contenido!titulo = txAgregarLista.Text
   
-  If txAgregarDescripcion.Text <> "" Then 
+  'If txAgregarDescripcion.Text <> "" Then 
+  '  FMain.Contenido!contenido = txAgregarDescripcion.Text
+  'Endif
+  
+  'Usamos "Len" para evaluar si hay o no contenido. Porque usamos la tecla TAB para pasar
+  'al botón "Listo", tenemos que descartar el tab para que no se guarde en la descripción si 
+  'es lo único que hay. Si el contenido es un sólo caracter es un problema si no una feature XD
+  
+  'Print Len(txAgregarDescripcion.Text)
+  If Len(txAgregarDescripcion.Text) > 1 Then 
     FMain.Contenido!contenido = txAgregarDescripcion.Text
   Endif
   
   FMain.Contenido!completado = False
   FMain.Contenido.Update
   FMain.mostrar_lista()
-  
-  FMain.Conn.Close
   
   Me.Close
   
@@ -53,7 +60,7 @@ Public Sub Form_KeyRelease()
   
 End
 
-Public Sub txAgregarLista_KeyRelease()
+Public Sub txAgregarLista_KeyRelease() 'Si presionamos "ENTER" agregamos a la lista 
   
   If Key.Code = 16777220 Or Key.code = 16777221 Then 'No me funciona de otra manera que no sea usando el código
     btnAgregar_Click
@@ -61,6 +68,16 @@ Public Sub txAgregarLista_KeyRelease()
   
 End
 
-Public Sub Form_Open()
+Public Sub txAgregarDescripcion_KeyPress()
+  
+  If Key.code = Key.Tab Then btnAgregar.SetFocus
+  
+End
+
+Public Sub btnAgregar_KeyRelease() 'Si presionamos "ENTER" agregamos a la lista 
+  
+  If Key.Code = 16777220 Or Key.code = 16777221 Then 'No me funciona de otra manera que no sea usando el código
+    btnAgregar_Click
+  Endif
   
 End
