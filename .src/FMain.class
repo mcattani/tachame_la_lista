@@ -371,6 +371,7 @@ Public Sub Form_KeyPress() 'Atajo de teclado para crear entrada
     mnAgregar_Click()
   Endif
   
+  
 End
 
 Public Sub mnuBuscarActualizaciones_Click()
