@@ -22,11 +22,82 @@ Public Sub Form_Open()
   Endif
   
   Conectar()
-  resExiste()
+  'resExiste()
+  VerificarBaseDatos()
   Mostrar_Lista()
   Chequear_Realizados()
   
 End
+
+Public Sub VerificarBaseDatos()
+  
+  Dim version As Integer
+  conectar()
+
+  'Crear tabla meta si no existe
+  conn.Exec("Create TABLE If Not EXISTS meta(clave TEXT PRIMARY KEY,valor TEXT)")
+  
+  ' Buscar versión actual
+  contenido = conn.exec("SELECT valor from meta where clave = 'db_version'")
+  
+  ' Si no existe asumimos versión vieja de bd
+  If Not contenido.Available Then 
+    ' Base vieja
+    Conn.Exec("INSERT INTO meta (clave, valor) VALUES ('db_version', '1')")
+    version = 1
+  Else 
+    version = contenido!valor
+  Endif
+  
+  conn.Close()
+  
+  Print version
+ 
+  ' Ejecutar migraciones necesarias si es una versión vieja
+  If version < 2 Then
+   MigrarV2()
+  Endif
+  
+    
+End
+
+Public Sub MigrarV2()
+  
+conectar()
+
+  Conn.Exec("BEGIN TRANSACTION")
+
+  ' Crear nueva tabla
+  Conn.Exec("CREATE TABLE datos_nueva (" &
+            "id INTEGER PRIMARY KEY, " &
+            "completado BOOLEAN NOT NULL DEFAULT 0, " &
+            "titulo TEXT NOT NULL, " &
+            "contenido TEXT, " &
+            "resaltado BOOLEAN NOT NULL DEFAULT 0)")
+
+  ' Copiar datos
+  Conn.Exec("INSERT INTO datos_nueva (id, completado, titulo, contenido, resaltado) " &
+            "SELECT id, completado, titulo, contenido, resaltado FROM datos")
+
+  ' Reemplazar tabla vieja
+  Conn.Exec("DROP TABLE datos")
+  Conn.Exec("ALTER TABLE datos_nueva RENAME TO datos")
+
+  ' Actualizar versión
+  Conn.Exec("UPDATE meta SET valor = '2' WHERE clave = 'db_version'")
+
+  Conn.Exec("COMMIT")
+
+  Print "Migración V2 completada"
+  
+  ' Debug: Mosramos version
+  contenido = conn.exec("SELECT valor from meta where clave = 'db_version'")
+  Print contenido!valor
+  
+  Conn.Close
+  
+End
+
 
 Public Sub resExiste() 
   ' Chequemos que exista la columna "resaltado" en la base de datos,

@@ -5,7 +5,6 @@
   Icon = Picture["icon.png"]
   Resizable = False
   Arrangement = Arrange.Horizontal
-  AutoResize = True
   { Lista Menu
     Text = ("Lista")
     { mnAgregar Menu
