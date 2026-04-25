@@ -2,7 +2,7 @@
 Title=Tachame la Lista
 Startup=FMain
 Icon=icon.png
-Version=0.7.14
+Version=0.7.15
 Component=gb.image
 Component=gb.gui.qt
 Component=gb.form
