@@ -1,3 +1,7 @@
+* Sat Apr 25 2026 The Nerdy Apprentice <marianoctt@gmail.com> 0.7.15
+- Migración de base datos (se ha mejorado el esquema), el programa detecta versiones viejas y las actualiza automáticamente.
+- Corrección de errores menores
+
 * Sat Aug 17 2024 The Nerdy Apprentice <marianoctt@gmail.com> 0.6.11
 - Corregido como se muestra el ícono de la aplicación
 - Creación de instalador
