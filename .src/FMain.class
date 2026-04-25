@@ -13,16 +13,15 @@ Private sAppDir As String = User.home &/ "/lista_db"
 
 Public Sub Form_Open()
 
-  Me.Text = "Tachame la Lista! " & "v." & Application.Version
+  Me.Text = "Tachame la Lista! " & "v" & Application.Version
 
-  ' Chequeamos que exista el directorio con la base de datos
+  ' Chequeamos que exista el directorio con la base de datos, si no existe la creamos
   If Not Exist(sAppDir) Then
     Mkdir sAppDir
     Copy "./b_datos.sqlite" To sAppDir &/ "b_datos.sqlite"
   Endif
 
   Conectar()
-  'resExiste()
   VerificarBaseDatos()
   Mostrar_Lista()
   Chequear_Realizados()
@@ -33,7 +32,7 @@ Public Sub VerificarBaseDatos()
 
   Dim version As Integer
 
-  conectar()
+  Conectar()
 
   'Crear tabla meta si no existe
   conn.Exec("Create TABLE If Not EXISTS meta(clave TEXT PRIMARY KEY,valor TEXT)")
@@ -41,7 +40,7 @@ Public Sub VerificarBaseDatos()
   ' Buscar versión actual
   contenido = conn.exec("SELECT valor from meta where clave = 'db_version'")
 
-  ' Si no existe asumimos versión vieja de bd
+  ' Si no existe asumimos versión vieja de BD
   If Not contenido.Available Then
     ' Base vieja
     Conn.Exec("INSERT INTO meta (clave, valor) VALUES ('db_version', '1')")
@@ -52,7 +51,7 @@ Public Sub VerificarBaseDatos()
 
   conn.Close()
 
-  Print version
+  Print "Versión de base de datos: " & version
 
   ' Ejecutar migraciones necesarias si es una versión vieja
   If version < 2 Then
@@ -90,40 +89,11 @@ Public Sub MigrarV2()
 
   Print "Migración V2 completada"
 
-  ' Debug: Mosramos version
-  contenido = conn.exec("SELECT valor from meta where clave = 'db_version'")
-  Print contenido!valor
+  'Debug: Mosramos version
+  'contenido = conn.exec("SELECT valor from meta where clave = 'db_version'")
+  'Print contenido!valor
 
   Conn.Close
-
-End
-
-Public Sub resExiste()
-  ' Chequemos que exista la columna "resaltado" en la base de datos,
-  ' en las versiones anteriores no existía. Si no existe la agregamos
-  ' PRAGMA table_info(datos) / ALTER TABLE datos ADD COLUMN resaltado BOOL NOT NULL DEFAULT '0';
-
-  Dim campo_existe As Boolean = False
-
-  Conectar()
-  Contenido = conn.Exec("PRAGMA table_info(datos)")
-
-  If contenido.Available Then
-    While (contenido.Available)
-      If contenido!name = "resaltado" Then
-        'Print "existe campo resaltado"
-        campo_existe = True
-      Endif
-      contenido.MoveNext
-    Wend
-  Endif
-
-  If campo_existe = False Then
-    contenido = conn.Exec("ALTER TABLE datos ADD COLUMN resaltado BOOL NOT NULL DEFAULT '0'")
-    Print "campo resaltado creado"
-  Endif
-
-  conn.Close
 
 End
 
@@ -145,9 +115,10 @@ End
 Public Sub Form_KeyRelease()
 
   If Key.Code = Key.Esc Then
-    'Settings.Write(Me)
-    Conn.Close
-    Quit
+    If conn.Opened Then
+      Conn.Close
+      Quit
+    Endif
   Endif
 
 End
@@ -251,14 +222,6 @@ Public Sub mnBorrar_Click()
 End
 
 Public Sub mnuBorrarRealizado_Click()
-  ' !!!! Habría que chequear primero que haya items marcados completados para ser borrados
-
-  '' Acá no se hace falta chequear que haya un elemento seleccionado.
-  ' 'Chequeamos primero que se haya seleccionado un elemento de la lista
-  ' If VLista.Selected = False Then
-  '   Message.Error("Debe elegir un ítem primero")
-  '   Return
-  ' Endif
 
   Conectar()
 
@@ -374,12 +337,7 @@ Public Sub mnMarcarIncompleto_Click()
 End
 
 Public Sub mnuQuitarResaltado_Click()
-  ' Nos aseguramos que haya in ítem seleccionado
 
-  ' If Item_Seleccionado = 0 Then
-  '   Message.Error("Debe seleccionar un ítem primero")
-  '   Return
-  ' Endif
   conectar()
 
   Contenido = Conn.Edit("datos", "id=" & Item_Seleccionado)
@@ -416,7 +374,8 @@ End
 
 Public Sub mnSalir_Click()
 
-  Conn.Close
+  conn.Close
+  TrayIcon1.Delete
   Quit
 
 End
@@ -429,7 +388,7 @@ End
 
 Public Sub Form_Close()
 
-  Conn.Close
+  conn.Close
   TrayIcon1.Delete
   Quit
 
