@@ -43,10 +43,6 @@
   }
   { Programa Menu
     Text = ("Programa")
-    { mnSalir Menu
-      Text = ("Salir")
-      Picture = Picture["icon:/32/quit"]
-    }
     { mnuBuscarActualizaciones Menu
       Text = ("Buscar Actualizaciones")
       Picture = Picture["icon:/24/update"]
@@ -56,6 +52,10 @@
     { mnAcerca Menu
       Text = ("Acerca de") & "..."
       Picture = Picture["icon:/32/info"]
+    }
+    { mnSalir Menu
+      Text = ("Salir")
+      Picture = Picture["icon:/32/quit"]
     }
   }
   { VLista ListView

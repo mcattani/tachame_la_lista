@@ -2,90 +2,88 @@
 
 Public Sub btnAgregar_Click()
   ' SELECT MAX(id) FROM clases LIMIT 1 --> Nos devuelve el total de IDs en la tabla
-  
-  FMain.Conectar()  
-  
+
+  FMain.Conectar()
+
   'Dim Idn As Integer
-  
-  If txAgregarLista.Text = "" Then 
+
+  If txAgregarLista.Text = "" Then
     Message.Warning("No puede agregarun elemento vacío a la lista")
-    Return 
+    Return
   Endif
-  
+
   'Obtenemos el último ID y sumamos +1 para el nuevo registro
   'FMain.Contenido = FMain.Conn.Exec("SELECT MAX(id) FROM datos LIMIT 1")
   'Si no hay ninguna entrada arrancamos desde cero
-  'If FMain.Contenido["MAX(id)"] = Null Then 
+  'If FMain.Contenido["MAX(id)"] = Null Then
   '  idn = 0
-  'Else 
+  'Else
   '  Idn = CInt(FMain.Contenido["MAX(id)"]) + 1
   'Endif
-  
+
   FMain.contenido = FMain.Conn.Create("datos")
   'FMain.Contenido!id = idn
   FMain.Contenido!titulo = txAgregarLista.Text
-  
-  'If txAgregarDescripcion.Text <> "" Then 
+
+  'If txAgregarDescripcion.Text <> "" Then
   '  FMain.Contenido!contenido = txAgregarDescripcion.Text
   'Endif
-  
+
   'Usamos "Len" para evaluar si hay o no contenido. Porque usamos la tecla TAB para pasar
-  'al botón "Listo", tenemos que descartar el tab para que no se guarde en la descripción si 
+  'al botón "Listo", tenemos que descartar el tab para que no se guarde en la descripción si
   'es lo único que hay. Si el contenido es un sólo caracter es un problema si no una feature XD
-  
+
   'Print Len(txAgregarDescripcion.Text)
-  If Len(txAgregarDescripcion.Text) > 1 Then 
+  If Len(txAgregarDescripcion.Text) > 1 Then
     FMain.Contenido!contenido = txAgregarDescripcion.Text
   Endif
-  
+
   FMain.Contenido!completado = False
   FMain.Contenido.Update
   FMain.mostrar_lista()
-  
+
   FMain.Conn.Close
-  
+
   Me.Close
-  
+
 End
 
 Public Sub btnCancelar_Click()
-  
+
   Me.Close
-  
+
 End
 
 Public Sub Form_KeyRelease()
-  
+
   If Key.Code = Key.Esc Then
     Me.Close
   Endif
-  
+
 End
 
-Public Sub txAgregarLista_KeyRelease() 'Si presionamos "ENTER" agregamos a la lista 
-  
+Public Sub txAgregarLista_KeyRelease() 'Si presionamos "ENTER" agregamos a la lista
+
   If Key.Code = 16777220 Or Key.code = 16777221 Then 'No me funciona de otra manera que no sea usando el código
     btnAgregar_Click
   Endif
-  
+
 End
 
 Public Sub txAgregarDescripcion_KeyPress()
-  
+
   If Key.code = Key.Tab Then btnAgregar.SetFocus
-  
+
 End
 
-Public Sub btnAgregar_KeyRelease() 'Si presionamos "ENTER" agregamos a la lista 
-  
+Public Sub btnAgregar_KeyRelease() 'Si presionamos "ENTER" agregamos a la lista
+
   If Key.Code = 16777220 Or Key.code = 16777221 Then 'No me funciona de otra manera que no sea usando el código
     btnAgregar_Click
   Endif
-  
+
 End
 
 Public Sub Form_Open()
-
-  
 
 End

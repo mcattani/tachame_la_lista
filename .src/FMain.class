@@ -3,7 +3,7 @@
 ' Toda la información sobre esta aplicació en:
 ' https://thenerdyapprentice.blogspot.com/
 ' Visita y deja algún comentario en el blog XD
-' The Nerdy Apprentice 
+' The Nerdy Apprentice
 
 Public Conn As Connection
 Public Contenido As Result
@@ -12,72 +12,72 @@ Private Cheers As Sound
 Private sAppDir As String = User.home &/ "/lista_db"
 
 Public Sub Form_Open()
-  
+
   Me.Text = "Tachame la Lista! " & "v." & Application.Version
-  
+
   ' Chequeamos que exista el directorio con la base de datos
-  If Not Exist(sAppDir) Then 
+  If Not Exist(sAppDir) Then
     Mkdir sAppDir
     Copy "./b_datos.sqlite" To sAppDir &/ "b_datos.sqlite"
   Endif
-  
+
   Conectar()
   'resExiste()
   VerificarBaseDatos()
   Mostrar_Lista()
   Chequear_Realizados()
-  
+
 End
 
 Public Sub VerificarBaseDatos()
-  
+
   Dim version As Integer
+
   conectar()
 
   'Crear tabla meta si no existe
   conn.Exec("Create TABLE If Not EXISTS meta(clave TEXT PRIMARY KEY,valor TEXT)")
-  
+
   ' Buscar versión actual
   contenido = conn.exec("SELECT valor from meta where clave = 'db_version'")
-  
+
   ' Si no existe asumimos versión vieja de bd
-  If Not contenido.Available Then 
+  If Not contenido.Available Then
     ' Base vieja
     Conn.Exec("INSERT INTO meta (clave, valor) VALUES ('db_version', '1')")
     version = 1
-  Else 
+  Else
     version = contenido!valor
   Endif
-  
+
   conn.Close()
-  
+
   Print version
- 
+
   ' Ejecutar migraciones necesarias si es una versión vieja
   If version < 2 Then
-   MigrarV2()
+    MigrarV2()
   Endif
-  
-    
+
 End
 
 Public Sub MigrarV2()
-  
-conectar()
+
+  conectar()
 
   Conn.Exec("BEGIN TRANSACTION")
 
   ' Crear nueva tabla
   Conn.Exec("CREATE TABLE datos_nueva (" &
-            "id INTEGER PRIMARY KEY, " &
-            "completado BOOLEAN NOT NULL DEFAULT 0, " &
-            "titulo TEXT NOT NULL, " &
-            "contenido TEXT, " &
-            "resaltado BOOLEAN NOT NULL DEFAULT 0)")
+    "id INTEGER PRIMARY KEY, " &
+    "completado BOOLEAN NOT NULL DEFAULT 0, " &
+    "titulo TEXT NOT NULL, " &
+    "contenido TEXT, " &
+    "resaltado BOOLEAN NOT NULL DEFAULT 0)")
 
   ' Copiar datos
   Conn.Exec("INSERT INTO datos_nueva (id, completado, titulo, contenido, resaltado) " &
-            "SELECT id, completado, titulo, contenido, resaltado FROM datos")
+    "SELECT id, completado, titulo, contenido, resaltado FROM datos")
 
   ' Reemplazar tabla vieja
   Conn.Exec("DROP TABLE datos")
@@ -89,47 +89,46 @@ conectar()
   Conn.Exec("COMMIT")
 
   Print "Migración V2 completada"
-  
+
   ' Debug: Mosramos version
   contenido = conn.exec("SELECT valor from meta where clave = 'db_version'")
   Print contenido!valor
-  
+
   Conn.Close
-  
+
 End
 
-
-Public Sub resExiste() 
+Public Sub resExiste()
   ' Chequemos que exista la columna "resaltado" en la base de datos,
   ' en las versiones anteriores no existía. Si no existe la agregamos
   ' PRAGMA table_info(datos) / ALTER TABLE datos ADD COLUMN resaltado BOOL NOT NULL DEFAULT '0';
-  
+
   Dim campo_existe As Boolean = False
-  
+
   Conectar()
   Contenido = conn.Exec("PRAGMA table_info(datos)")
-  
-  If contenido.Available Then 
+
+  If contenido.Available Then
     While (contenido.Available)
-      If contenido!name = "resaltado" Then 
+      If contenido!name = "resaltado" Then
         'Print "existe campo resaltado"
         campo_existe = True
       Endif
       contenido.MoveNext
     Wend
   Endif
-  
+
   If campo_existe = False Then
     contenido = conn.Exec("ALTER TABLE datos ADD COLUMN resaltado BOOL NOT NULL DEFAULT '0'")
     Print "campo resaltado creado"
   Endif
-  
+
   conn.Close
-  
+
 End
 
 Public Sub Conectar() ' Función para conectarnos a la base de datos
-  
+
   Conn = New Connection
   Conn.Type = "sqlite"
   Conn.host = sAppDir
@@ -140,312 +139,312 @@ Public Sub Conectar() ' Función para conectarnos a la base de datos
     Conn = Null
     Quit
   Endif
-  
+
 End
 
 Public Sub Form_KeyRelease()
-  
+
   If Key.Code = Key.Esc Then
     'Settings.Write(Me)
     Conn.Close
     Quit
   Endif
-  
+
 End
 
 Public Sub Mostrar_Lista() ' Función para popular la lista de eventos y chequear completados y resaltados
   '  VLista[Item_Seleccionado].Background = Color.Darker(Color.Yellow)
   '  VLista[Item_Seleccionado].Foreground = Color.Black
-  
+
   Conectar()
-  
+
   Contenido = Conn.Exec("select id, completado, resaltado, titulo from datos")
-  If Contenido.Available Then 
+  If Contenido.Available Then
     VLista.Clear
     While (Contenido.Available)
-      If Contenido!completado = False Then 
+      If Contenido!completado = False Then
         VLista.Add(CInt(Contenido!id), Contenido!titulo, Picture["incomp.png"])
-      Else 
+      Else
         VLista.Add(CInt(Contenido!id), Contenido!titulo, Picture["comp.png"])
       Endif
       If contenido!resaltado = True Then
         'VLista[CInt(Contenido!id)].Background = Color.Darker(Color.Yellow)
         VLista[CInt(Contenido!id)].Background = Color.Darker(Color.Yellow)
         VLista[CInt(Contenido!id)].Foreground = Color.Black
-      Else 
-        VLista[CInt(Contenido!id)].Background = Color.Default  
-        VLista[CInt(Contenido!id)].Foreground = Color.Default 
+      Else
+        VLista[CInt(Contenido!id)].Background = Color.Default
+        VLista[CInt(Contenido!id)].Foreground = Color.Default
       Endif
       Contenido.MoveNext
     Wend
   Endif
-  
+
   conn.Close
-  
-  If VLista.Count = 0 Then 'Si no hay ningún contenido en la lista limpiar ocultar el panel de contenido y desactivar menú borrar todos 
+
+  If VLista.Count = 0 Then 'Si no hay ningún contenido en la lista limpiar ocultar el panel de contenido y desactivar menú borrar todos
     txContenido.Text = ""
     panelContenido.Visible = False
     mnuBorrarRealizado.Enabled = False
-  Else 
+  Else
     mnuBorrarRealizado.Enabled = True
-  Endif    
-  
+  Endif
+
   Chequear_Realizados()
   Chequear_Resaltados()
-  
+
 End
 
 Public Sub VLista_Select() ' Función que nos muestra el contenido del título elegido en la ListView
   ' select * from datos where id = 1
-  
+
   Conectar()
-  
+
   Contenido = Conn.Exec("select contenido from datos where id = " & VLista.Item.key)
   If Contenido!contenido <> "" Then
     txContenido.Text = Contenido!contenido
     txContenido.pos = 0
     panelContenido.Visible = True
-  Else 
+  Else
     panelContenido.Visible = False
   Endif
-  
+
   Item_Seleccionado = VLista.Item.key
-  
+
   'Print (Item_Seleccionado)
-  
+
   Conn.Close
-  
+
 End
 
 Public Sub mnAgregar_Click()
-  
+
   frmAgregar.show
-  
+
 End
 
 Public Sub mnBorrar_Click()
-  
+
   'Chequeamos primero que se haya seleccionado un elemento de la lista
   If VLista.Selected = False Then
     Message.Error("Debe elegir un ítem primero")
-    Return 
+    Return
   Endif
-  
+
   conectar()
-  
-  If Message.Question("¿Está seguro de que desea borrar este ítem?", "Si", "No") = 1 Then 
+
+  If Message.Question("¿Está seguro de que desea borrar este ítem?", "Si", "No") = 1 Then
     Contenido = Conn.Exec("delete from datos where id=" & Item_Seleccionado)
   Endif
   Conn.Close
-  
+
   'Limpiamos lista y recargamos
   VLista.Clear
   Mostrar_Lista
-  
+
   If VLista.Count = 0 Then 'Si no hay ningún contenido en la lista limpiar ocultar el panel de contenido
     txContenido.Text = ""
     Rep_Audio_Final()
-  Endif    
-  
+  Endif
+
   panelContenido.Visible = False 'Cerramos el panel lateral para que no quede abierto tras borrar ítem que pueda conetener
-  
+
 End
 
 Public Sub mnuBorrarRealizado_Click()
   ' !!!! Habría que chequear primero que haya items marcados completados para ser borrados
-  
-  '' Acá no se hace falta chequear que haya un elemento seleccionado. 
+
+  '' Acá no se hace falta chequear que haya un elemento seleccionado.
   ' 'Chequeamos primero que se haya seleccionado un elemento de la lista
   ' If VLista.Selected = False Then
   '   Message.Error("Debe elegir un ítem primero")
-  '   Return 
+  '   Return
   ' Endif
-  
+
   Conectar()
-  
-  If Message.Question("¿Está seguro de que desea borrar todos los ítems marcados como completados?") = 1 Then 
+
+  If Message.Question("¿Está seguro de que desea borrar todos los ítems marcados como completados?") = 1 Then
     Conn.Exec("delete from datos where completado=True")
     'Limpiamos lista y recargamos
     VLista.Clear
     Mostrar_Lista
     Rep_Audio_Final()
-  Else 
-    Return 
-  Endif 
-  
-  conn.Close 
+  Else
+    Return
+  Endif
+
+  conn.Close
   panelContenido.Visible = False ' Cerramos el panel lateral por si queda abierto tras borrar ítem realizado
-  
+
 End
 
-Public Sub Chequear_Realizados() 
+Public Sub Chequear_Realizados()
   ' Función para chequear si hay elementos completados de la lista así habilitamos / deshabilitamos el menú de borrado los elementos completados
-  
+
   conectar()
   mnuBorrarRealizado.Enabled = False
-  
+
   Contenido = Conn.Exec("select completado from datos where completado=true")
   If contenido.Available = ""
-    Return 
-  Else 
+    Return
+  Else
     mnuBorrarRealizado.Enabled = True
   Endif
-  
-  conn.Close 
-  
+
+  conn.Close
+
 End
 
 Public Sub Chequear_Resaltados()
-  ' Función para chequear si hay elementos resaltados de la lista así habilitamos / deshabilitamos el menú de borrado los elementos completados 
-  
+  ' Función para chequear si hay elementos resaltados de la lista así habilitamos / deshabilitamos el menú de borrado los elementos completados
+
   conectar()
   mnuQuitarResaltado.Enabled = False
-  
+
   Contenido = Conn.Exec("select resaltado from datos where resaltado=true")
   If contenido.Available = "" Then
-    Return 
-  Else 
+    Return
+  Else
     mnuQuitarResaltado.Enabled = True
   Endif
-  
+
   conn.Close
-  
+
 End
 
 Public Sub mnMarcarCompletado_Click()
   'Chequeamos primero que se haya seleccionado un elemento de la lista
-  
+
   If VLista.Selected = False Then
     Message.Error("Debe elegir un ítem primero")
-    Return 
+    Return
   Endif
-  ' 
+  '
   conectar()
-  
+
   Contenido = Conn.Edit("datos", "id=" & Item_Seleccionado)
   Contenido!completado = True
   contenido.Update
   conn.Close
-  
+
   'Limpiamos lista y recargamos
   Rep_Audio
   VLista.Clear
   Mostrar_Lista
-  
+
 End
 
 Public Sub mnuMarcarImportante_Click()
   'Chequeamos primero que se haya seleccionado un elemento de la lista
-  
+
   If VLista.Selected = False Then
     Message.Error("Debe elegir un ítem primero")
-    Return 
+    Return
   Endif
-  
+
   conectar()
-  
+
   Contenido = conn.Edit("datos", "id=" & Item_Seleccionado)
   Contenido!resaltado = True
   contenido.Update
   conn.Close
-  
+
   VLista.Clear
   Mostrar_Lista
-  
+
 End
 
 Public Sub mnMarcarIncompleto_Click()
   ' Nos aseguramos que haya in ítem seleccionado
-  
-  If Item_Seleccionado = 0 Then 
+
+  If Item_Seleccionado = 0 Then
     Message.Error("Debe seleccionar un ítem primero")
-    Return 
+    Return
   Endif
-  
+
   conectar()
   Contenido = Conn.Edit("datos", "id=" & Item_Seleccionado)
   Contenido!completado = False
   contenido.Update
   conn.Close
-  
+
   'Limpiamos lista y recargamos
   VLista.Clear
   Mostrar_Lista
-  
+
 End
 
 Public Sub mnuQuitarResaltado_Click()
   ' Nos aseguramos que haya in ítem seleccionado
-  
-  ' If Item_Seleccionado = 0 Then 
+
+  ' If Item_Seleccionado = 0 Then
   '   Message.Error("Debe seleccionar un ítem primero")
-  '   Return 
+  '   Return
   ' Endif
   conectar()
-  
+
   Contenido = Conn.Edit("datos", "id=" & Item_Seleccionado)
   Contenido!resaltado = False
   contenido.Update
   conn.Close
-  
+
   'Limpiamos lista y recargamos
   VLista.Clear
   Mostrar_Lista
-  
+
 End
 
 Public Sub Rep_Audio() 'Función para reproducir sonido de victoria XD
-  
+
   Dim sonidos As New String[2]
-  
+
   sonidos[0] = "yay.wav"
   sonidos[1] = "fanfare.wav"
   Cheers = Sound.Load(sonidos[Rand(0, 1)])
   Cheers.Play
-  
+
 End
 
 Public Sub Rep_Audio_Final()
-  
+
   Dim sonido As String
-  
+
   sonido = "short-applause.wav"
   cheers = Sound.Load(sonido)
   cheers.Play
-  
+
 End
 
 Public Sub mnSalir_Click()
-  
+
   Conn.Close
-  Quit 
-  
+  Quit
+
 End
 
 Public Sub mnAcerca_Click()
-  
+
   frmAbout.show
-  
+
 End
 
 Public Sub Form_Close()
-  
+
   Conn.Close
   TrayIcon1.Delete
-  Quit 
-  
+  Quit
+
 End
 
 Public Sub Form_KeyPress() 'Atajo de teclado para crear entrada
-  
-  If Key.Code = Key["a"] And Key.control Then 
+
+  If Key.Code = Key["a"] And Key.control Then
     mnAgregar_Click()
   Endif
-  
+
 End
 
 Public Sub mnuBuscarActualizaciones_Click()
-  
+
   Actualizaciones.buscar_actualizacion()
-  
+
 End
