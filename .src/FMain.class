@@ -417,13 +417,11 @@ End
 
 Public Sub mnuEnableSound_Click()
 
-  ' Actualizamos la flag según el estado del menu
+  'Actualizamos la flag según el estado del menu
   sonidoActivo = mnuEnableSound.Checked
 
   'Guardmos la preferencia en settings
   Settings["Opciones/Sonido"] = sonidoActivo
   Settings.Save()
-
-  Print sonidoActivo
 
 End
