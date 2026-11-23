@@ -384,9 +384,7 @@ End
 
 Public Sub mnSalir_Click()
 
-  conn.Close
-  TrayIcon1.Delete
-  Quit
+  Me.Close
 
 End
 
@@ -398,9 +396,8 @@ End
 
 Public Sub Form_Close()
 
-  conn.Close
+  If conn.Opened Then conn.Close
   TrayIcon1.Delete
-  Quit
 
 End
 
