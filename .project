@@ -7,6 +7,7 @@ Component=gb.db
 Component=gb.dbus
 Component=gb.image
 Component=gb.sdl2.audio
+Component=gb.settings
 Component=gb.db.sqlite3
 Component=gb.gui.qt
 Component=gb.desktop

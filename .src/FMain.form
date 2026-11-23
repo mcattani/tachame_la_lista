@@ -43,6 +43,14 @@
   }
   { Programa Menu
     Text = ("Programa")
+    { mnuEnableSound Menu
+      Text = ("Activar Sonido")
+      Picture = Picture["icon:/medium/speaker"]
+      Toggle = True
+      Checked = True
+    }
+    { Menu5 Menu
+    }
     { mnuBuscarActualizaciones Menu
       Text = ("Buscar Actualizaciones")
       Picture = Picture["icon:/24/update"]

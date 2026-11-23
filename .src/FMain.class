@@ -10,6 +10,7 @@ Public Contenido As Result
 Private Item_Seleccionado As Integer
 Private Cheers As Sound
 Private sAppDir As String = User.home &/ "/lista_db"
+Private sonidoActivo As Boolean
 
 Public Sub Form_Open()
 
@@ -20,6 +21,11 @@ Public Sub Form_Open()
     Mkdir sAppDir
     Copy "./b_datos.sqlite" To sAppDir &/ "b_datos.sqlite"
   Endif
+
+  ' Cargamos el estado guardado del estado de reproduccion del audio
+  mnuEnableSound.Checked = Settings["Opciones/Sonido", True]
+  ' Guardamos el estado en la variable global
+  sonidoActivo = mnuEnableSound.Checked
 
   Conectar()
   VerificarBaseDatos()
@@ -353,6 +359,8 @@ End
 
 Public Sub Rep_Audio() 'Función para reproducir sonido de victoria XD
 
+  If Not sonidoActivo Then Return
+
   Dim sonidos As New String[2]
 
   sonidos[0] = "yay.wav"
@@ -363,6 +371,8 @@ Public Sub Rep_Audio() 'Función para reproducir sonido de victoria XD
 End
 
 Public Sub Rep_Audio_Final()
+
+  If Not sonidoActivo Then Return
 
   Dim sonido As String
 
@@ -405,5 +415,18 @@ End
 Public Sub mnuBuscarActualizaciones_Click()
 
   Actualizaciones.buscar_actualizacion()
+
+End
+
+Public Sub mnuEnableSound_Click()
+
+  ' Actualizamos la flag según el estado del menu
+  sonidoActivo = mnuEnableSound.Checked
+
+  'Guardmos la preferencia en settings
+  Settings["Opciones/Sonido"] = sonidoActivo
+  Settings.Save()
+
+  Print sonidoActivo
 
 End
