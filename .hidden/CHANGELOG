@@ -1,3 +1,7 @@
+* Mon Nov 23 2026 The Nerdy Apprentice <marianoctt@gmail.com> 0.7.16
+- Agregado opción de menu para activar/desactivar sonido
+- Corrección de código
+
 * Sat Apr 25 2026 The Nerdy Apprentice <marianoctt@gmail.com> 0.7.15
 - Migración de base datos (se ha mejorado el esquema), el programa detecta versiones viejas y las actualiza automáticamente.
 - Corrección de errores menores
